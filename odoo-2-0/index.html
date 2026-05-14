@@ -122,7 +122,7 @@
 </head>
 <body>
   <div class="form-card">
-    <div class="form-title">Odoo 2.0</div>
+    <div class="form-title">cargaManualAsesores</div>
     <div class="form-subtitle">Introduce los datos del lead</div>
 
     <div class="field">
@@ -156,27 +156,26 @@
     </div>
 
     <div class="field">
-      <label for="lead_sub_source">Lead Sub Source</label>
-      <input type="text" id="lead_sub_source" name="lead_sub_source" placeholder="Sub-origen del lead">
+      <label for="lead_sub_source">Ambassador</label>
+      <input type="text" id="lead_sub_source" name="lead_sub_source" placeholder="Ambassador">
     </div>
 
     <div class="field">
       <label for="sales_manager">Sales Manager</label>
       <select id="sales_manager" name="sales_manager">
         <option value="" disabled selected>Selecciona un manager</option>
-        <option value="Koen Hoogteijling">Koen Hoogteijling</option>
-        <option value="David Conesa">David Conesa</option>
+        <option value="koen@solarmente.es">Koen Hoogteijling</option>
       </select>
     </div>
 
-    <button class="btn-submit" id="submitBtn">Enviar</button>
+    <button class="btn-submit" id="BotonColab">Enviar</button>
     <div class="status" id="status"></div>
   </div>
 
   <script>
     const WEBHOOK_URL = 'https://hook.eu2.make.com/5caifiswdss82g4xhbbw6wjrohnfdggt';
 
-    document.getElementById('submitBtn').addEventListener('click', async function() {
+    document.getElementById('BotonColab').addEventListener('click', async function() {
       const btn = this;
       const status = document.getElementById('status');
 
@@ -206,7 +205,6 @@
         if (response.ok) {
           status.textContent = 'Enviado correctamente';
           status.className = 'status success';
-          // Reset form
           document.querySelectorAll('.field input').forEach(i => i.value = '');
           document.getElementById('sales_manager').selectedIndex = 0;
         } else {
