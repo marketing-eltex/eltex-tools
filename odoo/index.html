@@ -4,12 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Odoo - Eltex Tools</title>
+  <title>Parámetros</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@600;700&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
+      background-color: #ffffff;
+      background-image: radial-gradient(circle, rgba(67,73,255,0.11) 1.5px, transparent 1.5px);
+      background-size: 22px 22px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: 24px;
     }
+
+    .logo { height: 28px; width: auto; }
+
+    .script-wrapper {
+      background: #ffffff;
+      border: 1px solid #E5E7FF;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(67, 73, 255, 0.08);
+      padding: 28px 32px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    /* --- Tu CSS original, sin cambios --- */
     .param {
       margin-bottom: 10px;
     }
@@ -26,16 +52,46 @@
     }
     #postButton {
       margin-left: 10px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #4349FF, #427BFF);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Rethink Sans', Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      box-shadow: 0 4px 14px rgba(67, 73, 255, 0.28);
+      transition: opacity 0.2s, transform 0.15s;
+      touch-action: manipulation;
+    }
+    #postButton:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    #postButton:active {
+      transform: translateY(0);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="response"><strong>Respuesta:</strong> <span id="responseContent"></span></div>
-    <button id="postButton">CLICK AQUÍ</button>
+
+  <img
+    src="https://eltex.es/wp-content/uploads/2025/04/cropped-Eltex_Logo_Positive-e1744210383227-scaled.png"
+    alt="Eltex"
+    class="logo"
+  />
+
+  <div class="script-wrapper">
+    <div class="container">
+      <div id="response"><strong>Respuesta:</strong> <span id="responseContent"></span></div>
+      <button id="postButton">CLICK AQUÍ</button>
+    </div>
   </div>
 
   <script>
+    // Función para obtener los parámetros de la URL actual del navegador
     function getQueryParams() {
       const urlParams = new URLSearchParams(window.location.search);
       const params = {};
@@ -45,6 +101,7 @@
       return params;
     }
 
+    // Obtener los parámetros de la URL
     const queryParams = getQueryParams();
     const db = queryParams['db'];
     const nombre = queryParams['nombre'];
@@ -67,11 +124,12 @@
     const lead_ambassador = queryParams['lead_ambassador'];
     const installation_order_id = queryParams['installation_order_id'];
 
+    // Acción botón
     document.getElementById('postButton').addEventListener('click', function() {
         const data = {
             db: db,
             lang: 'es_ES',
-            partner_id: 
+            partner_id:
                 `{
                     "phone":"${telefono}",
                     "name":"${nombre}",
@@ -88,7 +146,7 @@
                 }`,
             identify_partner: '["phone"]',
             company_id: 'Eltex Solar SL',
-            crm_lead_id: 
+            crm_lead_id:
                 `{
                 "eltex_ambassador": "${lead_ambassador}",
                 "eltex_electricity_consumption": "${electricity_consumption}",
@@ -116,6 +174,7 @@
         .then(text => {
             console.log("Respuesta recibida:", text);
             document.getElementById('responseContent').textContent = text;
+            // Abrir la URL en una nueva pestaña
             window.open(text, '_blank');
         })
         .catch(error => {
