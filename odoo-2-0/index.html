@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Odoo 2.0 - Eltex Tools</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .form-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 40px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .form-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #111;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 28px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fafafa;
+      color: #1a1a1a;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      background: #fff;
+    }
+
+    .field input::placeholder {
+      color: #bbb;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      background: #2563eb;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-submit:disabled {
+      background: #93c5fd;
+      cursor: not-allowed;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .status.success { color: #16a34a; }
+    .status.error { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="form-card">
+    <div class="form-title">Odoo 2.0</div>
+    <div class="form-subtitle">Introduce los datos del lead</div>
+
+    <div class="field">
+      <label for="first_name">Nombre</label>
+      <input type="text" id="first_name" name="first_name" placeholder="Nombre completo">
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="email@ejemplo.com">
+    </div>
+
+    <div class="field">
+      <label for="phone">Teléfono</label>
+      <input type="tel" id="phone" name="phone" placeholder="612 345 678">
+    </div>
+
+    <div class="field">
+      <label for="street">Dirección</label>
+      <input type="text" id="street" name="street" placeholder="Calle, número, piso...">
+    </div>
+
+    <div class="field">
+      <label for="zipcode">Código postal</label>
+      <input type="text" id="zipcode" name="zipcode" placeholder="08001">
+    </div>
+
+    <div class="field">
+      <label for="lead_source">Lead Source</label>
+      <input type="text" id="lead_source" name="lead_source" placeholder="Origen del lead">
+    </div>
+
+    <div class="field">
+      <label for="lead_sub_source">Lead Sub Source</label>
+      <input type="text" id="lead_sub_source" name="lead_sub_source" placeholder="Sub-origen del lead">
+    </div>
+
+    <div class="field">
+      <label for="sales_manager">Sales Manager</label>
+      <select id="sales_manager" name="sales_manager">
+        <option value="" disabled selected>Selecciona un manager</option>
+        <option value="Koen Hoogteijling">Koen Hoogteijling</option>
+        <option value="David Conesa">David Conesa</option>
+      </select>
+    </div>
+
+    <button class="btn-submit" id="submitBtn">Enviar</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    const WEBHOOK_URL = 'https://hook.eu2.make.com/5caifiswdss82g4xhbbw6wjrohnfdggt';
+
+    document.getElementById('submitBtn').addEventListener('click', async function() {
+      const btn = this;
+      const status = document.getElementById('status');
+
+      const data = {
+        first_name: document.getElementById('first_name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        street: document.getElementById('street').value,
+        zipcode: document.getElementById('zipcode').value,
+        lead_source: document.getElementById('lead_source').value,
+        lead_sub_source: document.getElementById('lead_sub_source').value,
+        sales_manager: document.getElementById('sales_manager').value
+      };
+
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      status.textContent = '';
+      status.className = 'status';
+
+      try {
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          status.textContent = 'Enviado correctamente';
+          status.className = 'status success';
+          // Reset form
+          document.querySelectorAll('.field input').forEach(i => i.value = '');
+          document.getElementById('sales_manager').selectedIndex = 0;
+        } else {
+          throw new Error('Error ' + response.status);
+        }
+      } catch (error) {
+        status.textContent = 'Error al enviar: ' + error.message;
+        status.className = 'status error';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar';
+      }
+    });
+  </script>
+</body>
+</html>
