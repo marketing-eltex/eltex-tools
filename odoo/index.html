@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Odoo - Eltex Tools</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .param {
+      margin-bottom: 10px;
+    }
+    #response {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    #postButton {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="response"><strong>Respuesta:</strong> <span id="responseContent"></span></div>
+    <button id="postButton">CLICK AQUÍ</button>
+  </div>
+
+  <script>
+    function getQueryParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const params = {};
+      for (const [key, value] of urlParams.entries()) {
+        params[key] = value;
+      }
+      return params;
+    }
+
+    const queryParams = getQueryParams();
+    const db = queryParams['db'];
+    const nombre = queryParams['nombre'];
+    const apiUrl = queryParams['url'];
+    const usuario = queryParams['usuario'];
+    const telefono = queryParams['telefono'];
+    const direccion = queryParams['direccion'];
+    const cp = queryParams['cp'];
+    const email = queryParams['email'];
+    const client_number = queryParams['client_number'];
+    const city = queryParams['city'];
+    const template_project = queryParams['template_project'];
+    const template_task = queryParams['template_task'];
+    const source = queryParams['source'];
+    const electricity_consumption = queryParams['electricity_consumption'];
+    const eltex_lead_CCO_ID = queryParams['lead_CCO_ID'];
+    const lead_provider_ID = queryParams['lead_provider_ID'];
+    const lead_origin = queryParams['lead_origin'];
+    const lead_provider = queryParams['lead_provider'];
+    const lead_ambassador = queryParams['lead_ambassador'];
+    const installation_order_id = queryParams['installation_order_id'];
+
+    document.getElementById('postButton').addEventListener('click', function() {
+        const data = {
+            db: db,
+            lang: 'es_ES',
+            partner_id: 
+                `{
+                    "phone":"${telefono}",
+                    "name":"${nombre}",
+                    "street":"${direccion}",
+                    "city":"",
+                    "lang":"es_ES",
+                    "title":"",
+                    "category_id":["VAL"],
+                    "zip":"${cp}",
+                    "email":"${email}",
+                    "city":"${city}",
+                    "crm_client_number": "${client_number}",
+                    "crm_CUPS": "${installation_order_id}"
+                }`,
+            identify_partner: '["phone"]',
+            company_id: 'Eltex Solar SL',
+            crm_lead_id: 
+                `{
+                "eltex_ambassador": "${lead_ambassador}",
+                "eltex_electricity_consumption": "${electricity_consumption}",
+                "eltex_lead_CCO_ID": "${eltex_lead_CCO_ID}",
+                "eltex_lead_provider_ID": "${lead_provider_ID}",
+                "eltex_lead_origin": "${lead_origin}",
+                "eltex_lead_provider": "${lead_provider}",
+                "source_id":"${source}",
+                "tag_ids":["tag3","tag1"]
+                }`,
+            project_template_id: `{"is_template":True,"name":"${template_project}"}`,
+            appointment_id: '{"duration":0,"users_also_define_overall_state":0}',
+            appointment_for_task_id: `[("name","like","${template_task}")]`
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': usuario
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.text())
+        .then(text => {
+            console.log("Respuesta recibida:", text);
+            document.getElementById('responseContent').textContent = text;
+            window.open(text, '_blank');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('responseContent').textContent = 'Error: ' + error;
+        });
+    });
+  </script>
+</body>
+</html>
